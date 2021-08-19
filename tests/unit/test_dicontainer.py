@@ -58,21 +58,6 @@ class TestContainer(unittest.TestCase):
 
         self.assertEqual(["apple", "banana", "cherry"], list(c))
 
-    def test_len_should_be_eq_zero(self) -> None:
-
-        c = Container()
-
-        self.assertEqual(0, len(c))
-
-    def test_len_should_return_length(self) -> None:
-
-        c = Container()
-        c["apple"] = None
-        c["banana"] = None
-        c["cherry"] = None
-
-        self.assertEqual(3, len(c))
-
     def test_del_missing_should_raise_error(self) -> None:
 
         c = Container()
@@ -89,29 +74,6 @@ class TestContainer(unittest.TestCase):
 
         with self.assertRaises(KeyError):
             c["key"]
-
-    def test_iter_should_return_empty_list(self) -> None:
-
-        c = Container()
-        iterator = iter(c)
-
-        self.assertEqual(0, len(list(iterator)))
-
-    def test_iter_should_iterate(self) -> None:
-        c = Container()
-
-        c["apple"] = None
-        c["banana"] = None
-        c["cherry"] = None
-        iterator = iter(c)
-        count = 0
-
-        for i in iterator:
-            count += 1
-            self.assertTrue(i in ["apple", "banana", "cherry"])
-
-        self.assertEqual(3, count)
-        self.assertEqual(0, len(list(iterator)))
 
     def test_clear_empty_should_reset(self) -> None:
 
