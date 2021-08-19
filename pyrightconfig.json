@@ -1,0 +1,18 @@
+{
+	"include": [
+    	"src",
+		"tests"
+  	],
+	"exclude": [
+		"**/__pycache__"
+	],
+	"reportMissingImports": false,
+	"reportUnknownArgumentType": false,
+	"reportUnknownMemberType": false,
+	"reportUnknownParameterType": false,
+	"reportUnknownVariableType": false,
+	"reportUntypedBaseClass": false,
+	"reportUntypedClassDecorator": false,
+	"reportGeneralTypeIssues": "warning",
+	"typeCheckingMode": "strict"
+}
