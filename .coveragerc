@@ -6,7 +6,6 @@ source =
 include =
     src/
 omit =
-    */__init__.py
     .tox
     setup.py
 

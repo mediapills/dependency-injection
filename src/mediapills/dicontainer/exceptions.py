@@ -3,12 +3,17 @@ class BaseContainerException(Exception):
     pass
 
 
+class BaseContainerKeyException(KeyError):
+
+    pass
+
+
 class ExpectedInvokableException(BaseContainerException):  # dead: disable
 
     pass
 
 
-class FrozenServiceException(BaseContainerException):  # dead: disable
+class FrozenServiceException(BaseContainerException):
 
     pass
 
@@ -18,6 +23,6 @@ class InvalidServiceIdentifierException(BaseContainerException):  # dead: disabl
     pass
 
 
-class UnknownIdentifierException(BaseContainerException):  # dead: disable
+class UnknownIdentifierException(BaseContainerKeyException):
 
     pass

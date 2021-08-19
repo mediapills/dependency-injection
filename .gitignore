@@ -4,6 +4,7 @@ __pycache__/
 
 # Coverage reports
 .coverage
+htmlcov/
 
 # Distribution / packaging
 *.egg-info/
