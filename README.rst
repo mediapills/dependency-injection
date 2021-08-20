@@ -1,12 +1,12 @@
 Installation
 ~~~~~~~~~~~~
 
-Before using mediapills.dicontainer in your project, add it to your ``requirements.txt``
+Before using mediapills.dependency_injection in your project, add it to your ``requirements.txt``
 file:
 
 .. code-block:: bash
 
-    $ echo "mediapills.dicontainer==0.0.1" >> requirements.txt
+    $ echo "mediapills.dependency_injection==0.0.1" >> requirements.txt
 
 Usage
 ~~~~~
@@ -15,11 +15,11 @@ Creating a container is a matter of creating a ``Container`` instance:
 
 .. code-block:: python
 
-    from mediapills.dicontainer import Container
+    from mediapills.dependency_injection import Container
 
     container = Container()
 
-As many other dependency injection containers, mediapills.dicontainer manages two
+As many other dependency injection containers, mediapills.dependency_injection manages two
 different kind of data: **services** and **parameters**.
 
 Defining Services

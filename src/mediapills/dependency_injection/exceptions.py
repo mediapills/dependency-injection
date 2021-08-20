@@ -3,11 +3,6 @@ class BaseContainerException(Exception):
     pass
 
 
-class BaseContainerKeyException(KeyError):
-
-    pass
-
-
 class ExpectedInvokableException(BaseContainerException):  # dead: disable
 
     pass
@@ -23,6 +18,12 @@ class InvalidServiceIdentifierException(BaseContainerException):  # dead: disabl
     pass
 
 
-class UnknownIdentifierException(BaseContainerKeyException):
+class UnknownIdentifierException(BaseContainerException, KeyError):
 
+    pass
+
+
+class RecursionInfiniteLoopError(  # dead: disable
+    BaseContainerException, RecursionError
+):
     pass

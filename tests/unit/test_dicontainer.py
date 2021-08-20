@@ -3,7 +3,7 @@ from typing import Any
 
 from parameterized import parameterized
 
-from mediapills.dicontainer import Container  # type: ignore
+from mediapills.dependency_injection import Container
 
 # TODO cover all functions https://docs.python.org/3/library/stdtypes.html#typesmapping
 
