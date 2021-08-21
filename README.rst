@@ -6,18 +6,25 @@ file:
 
 .. code-block:: bash
 
-    $ echo "mediapills.dependency_injection==0.0.1" >> requirements.txt
+    $ echo "-e git+ssh://git@github.com/mediapills/dependency_injection.git@0.0.2#egg=mediapills.dependency_injection" >> requirements.txt
+
+or
+
+.. code-block:: bash
+
+    $ echo "mediapills.dependency_injection==0.0.2" >> requirements.txt
+
 
 Usage
 ~~~~~
 
-Creating a container is a matter of creating a ``Container`` instance:
+Creating a injector is a matter of creating a ``Injector`` instance:
 
 .. code-block:: python
 
-    from mediapills.dependency_injection import Container
+    from mediapills.dependency_injection import Injector
 
-    container = Container()
+    injector = Injector()
 
 As many other dependency injection containers, mediapills.dependency_injection manages two
 different kind of data: **services** and **parameters**.
@@ -27,24 +34,23 @@ Defining Services
 
 A service is an object that does something as part of a larger system. Examples
 of services: a database connection, a templating engine, or a mailer. Almost
-any **global** object can be a service.
+any object can be a service.
 
 Services are defined by **anonymous functions** that return an instance of an
 object:
 
-
 .. code-block:: python
 
-    // define some services
-    container['session_storage'] = lambda c: Container (
-        return SessionStorage('SESSION_ID')
+    # define some services
+    injector['session_storage'] = lambda i: (
+        SessionStorage('SESSION_ID')
     )
 
-    container['session'] = lambda c: Container (
+    injector['session'] = lambda i: (
         return Session(c['session_storage'])
     )
 
-Notice that the anonymous function has access to the current container
+Notice that the anonymous function has access to the current injector
 instance, allowing references to other services or parameters.
 
 As objects are only created when you get them, the order of the definitions
@@ -52,29 +58,29 @@ does not matter.
 
 Using the defined services is also very easy:
 
-.. code-block:: php
+.. code-block:: python
 
-    // get the session object
-    session = container['session']
+    # get the session object
+    session = injector['session']
 
-    // the above call is roughly equivalent to the following code:
-    // storage = SessionStorage('SESSION_ID');
-    // session = Session(storage);
+    # the above call is roughly equivalent to the following code:
+    # storage = SessionStorage('SESSION_ID')
+    # session = Session(storage)
 
 Defining Factory Services
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-By default, each time you get a service, Pimple returns the **same instance**
+By default, each time you get a service, Injector returns the **same instance**
 of it. If you want a different instance to be returned for all calls, wrap your
 anonymous function with the ``factory()`` method
 
-.. code-block:: php
+.. code-block:: python
 
-    container['session'] = container.factory(lambda c: Container (
+    injector['session'] = injector.factory(lambda c: Injector (
         return Session(c['session_storage'])
     ))
 
-Now, each call to ``container['session']`` returns a new instance of the
+Now, each call to ``injector['session']`` returns a new instance of the
 session.
 
 Defining Parameters
@@ -83,18 +89,18 @@ Defining Parameters
 Defining a parameter allows to ease the configuration of your container from
 the outside and to store global values:
 
-.. code-block:: php
+.. code-block:: python
 
-    // define some parameters
-    container['cookie_name'] = 'SESSION_ID';
-    container['session_storage_cls'] = 'SessionStorage';
+    # define some parameters
+    injector['cookie_name'] = 'SESSION_ID'
+    injector['session_storage_cls'] = 'SessionStorage'
 
 If you change the ``session_storage`` service definition like below:
 
-.. code-block:: php
+.. code-block:: python
 
-    container['session_storage'] = lambda c: Container (
-        return c['session_storage_cls'](c['cookie_name']);
+    injector['session_storage'] = lambda i: (
+        i['session_storage_cls'](i['cookie_name'])
     )
 
 You can now easily change the cookie name by overriding the
@@ -110,7 +116,8 @@ parameters:
 
 .. code-block:: php
 
-    container['random_func'] = container.protect(lambda: return rand())
+    injector['random_func'] = lambda: rand()
+    injector.protect('random_func')
 
 Modifying Services after Definition
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -119,13 +126,13 @@ In some cases you may want to modify a service definition after it has been
 defined. You can use the ``extend()`` method to define additional code to be
 run on your service just after it is created:
 
-.. code-block:: php
+.. code-block:: python
 
-    container['session_storage'] = lambda c: Container (
-        return c['session_storage_class'](c['cookie_name'])
+    injector['session_storage'] = lambda i: (
+        i['session_storage_class'](i['cookie_name'])
     )
 
-    container.extend('session_storage', lambda storage, c: Container (
+    injector.extend('session_storage', lambda storage, i: (
         storage...()
 
         return storage
@@ -137,14 +144,14 @@ that gets access to the object instance and the container.
 Fetching the Service Creation Function
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When you access an object, Pimple automatically calls the anonymous function
+When you access an object, Injector automatically calls the anonymous function
 that you defined, which creates the service object for you. If you want to get
 raw access to this function, you can use the ``raw()`` method:
 
-.. code-block:: php
+.. code-block:: python
 
-    container['session'] = lambda c: Container (
-        return Session(c['session_storage'])
+    injector['session'] = lambda c: (
+        Session(c['session_storage'])
     )
 
     sessionFunction = container.raw('session')
