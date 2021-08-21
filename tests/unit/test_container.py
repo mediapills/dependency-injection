@@ -4,8 +4,7 @@ from typing import Any
 from parameterized import parameterized
 
 from mediapills.dependency_injection import Container
-
-# TODO cover all functions https://docs.python.org/3/library/stdtypes.html#typesmapping
+from mediapills.dependency_injection.exceptions import FrozenServiceException
 
 DATA_TYPES_PARAMETRIZED_INPUT = [
     ("str", "value"),  # Check text type (str)
@@ -27,7 +26,7 @@ DATA_TYPES_PARAMETRIZED_INPUT = [
 ]
 
 
-class TestContainer(unittest.TestCase):
+class TestContainerBase(unittest.TestCase):
     def test_get_missing_should_raise_error(self) -> None:
 
         c = Container()
@@ -56,7 +55,7 @@ class TestContainer(unittest.TestCase):
         c["banana"] = None
         c["cherry"] = None
 
-        self.assertEqual(["apple", "banana", "cherry"], list(c))
+        self.assertListEqual(["apple", "banana", "cherry"], list(c))
 
     def test_del_missing_should_raise_error(self) -> None:
 
@@ -108,69 +107,67 @@ class TestContainer(unittest.TestCase):
 
         self.assertIsNone(c.get("non-existent", None))
 
+    def test_keys_should_return_list(self) -> None:
 
-"""
+        c = Container()
+        c["apple"] = None
+        c["banana"] = None
+        c["cherry"] = None
 
-copy()
+        self.assertListEqual(["apple", "banana", "cherry"], [*c.keys()])
 
-    Return a shallow copy of the dictionary.
+    def test_pop_should_return_offset_and_remove(self) -> None:
 
-classmethod fromkeys(iterable[, value])
+        c = Container()
+        c["1"] = "one"
+        c["2"] = "two"
 
-    Create a new dictionary with keys from iterable and values set to value.
+        val = c.pop("1")
+        self.assertEqual("one", val)
+        self.assertEqual(1, len(c))
 
-    fromkeys() is a class method that returns a new dictionary. value defaults to None.
-    All of the values refer to just a single instance, so it generally doesn’t make sense
-    for value to be a mutable object such as an empty list. To get distinct values, use a
-    dict comprehension instead.
+    def test_values_should_return_list(self) -> None:
 
-items()
+        c = Container()
+        c["1"] = lambda x: "one"
+        c["2"] = lambda x: "two"
+        c["1 + 2"] = lambda x: "{} + {}".format(x["1"], x["2"])
 
-    Return a new view of the dictionary’s items ((key, value) pairs). See the
-    documentation of view objects.
+        self.assertListEqual(["one", "two", "one + two"], [*c.values()])
 
-keys()
+    def test_items_should_return_list(self) -> None:
 
-    Return a new view of the dictionary’s keys. See the documentation of view objects.
+        c = Container()
+        c["1"] = lambda x: "one"
+        c["2"] = lambda x: "two"
+        c["1 + 2"] = lambda x: "{} + {}".format(x["1"], x["2"])
 
-pop(key[, default])
+        self.assertListEqual(
+            [("1", "one"), ("2", "two"), ("1 + 2", "one + two")], [*c.items()]
+        )
 
-    If key is in the dictionary, remove it and return its value, else return default. If
-    default is not given and key is not in the dictionary, a KeyError is raised.
+    def test_copy_should_return_warmed_copy(self) -> None:
 
-popitem()
+        c = Container()
+        c["1"] = lambda x: "one"
+        c["2"] = lambda x: "two"
+        c["1 + 2"] = lambda x: "{} + {}".format(x["1"], x["2"])
 
-    Remove and return a (key, value) pair from the dictionary. Pairs are returned in LIFO
-    order.
+        self.assertDictEqual({"1": "one", "1 + 2": "one + two", "2": "two"}, c.copy())
 
-    popitem() is useful to destructively iterate over a dictionary, as often used in set
-    algorithms. If the dictionary is empty, calling popitem() raises a KeyError.
+    def test_update_should_change_value(self) -> None:
 
-    Changed in version 3.7: LIFO order is now guaranteed. In prior versions, popitem()
-    would return an arbitrary key/value pair.
+        c = Container()
+        c["1"] = lambda x: "one"
+        c.update({"1": lambda x: "uno"})
 
-reversed(d)
+        self.assertEqual("uno", c["1"])
 
-    Return a reverse iterator over the keys of the dictionary. This is a shortcut for
-    reversed(d.keys()).
+    def test_update_should_raise_error(self) -> None:
 
-    New in version 3.8.
+        c = Container()
+        c["1"] = lambda x: "one"
+        _ = c["1"]
 
-setdefault(key[, default])
-
-    If key is in the dictionary, return its value. If not, insert key with a value of
-    default and return default. default defaults to None.
-
-update([other])
-
-    Update the dictionary with the key/value pairs from other, overwriting existing keys.
-    Return None.
-
-    update() accepts either another dictionary object or an iterable of key/value pairs
-    (as tuples or other iterables of length two). If keyword arguments are specified, the
-    dictionary is then updated with those key/value pairs: d.update(red=1, blue=2).
-
-values()
-
-    Return a new view of the dictionary’s values. See the documentation of view objects.
-"""
+        with self.assertRaises(FrozenServiceException):
+            c.update({"1": lambda x: "uno"})
