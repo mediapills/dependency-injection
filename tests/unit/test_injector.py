@@ -3,7 +3,7 @@ from typing import Any
 
 from parameterized import parameterized
 
-from mediapills.dependency_injection import Container
+from mediapills.dependency_injection import Injector
 from mediapills.dependency_injection.exceptions import FrozenServiceException
 
 DATA_TYPES_PARAMETRIZED_INPUT = [
@@ -29,145 +29,145 @@ DATA_TYPES_PARAMETRIZED_INPUT = [
 class TestContainerBase(unittest.TestCase):
     def test_get_missing_should_raise_error(self) -> None:
 
-        c = Container()
+        obj = Injector()
 
         with self.assertRaises(KeyError):
-            c["key"]
+            obj["key"]
 
     @parameterized.expand(DATA_TYPES_PARAMETRIZED_INPUT)  # type: ignore
     def test_setter_should_set_value(self, key: str, val: Any) -> None:
 
-        c = Container()
-        c[key] = val
+        obj = Injector()
+        obj[key] = val
 
-        self.assertEqual(val, c[key])
+        self.assertEqual(val, obj[key])
 
     def test_list_should_be_empty(self) -> None:
 
-        c = Container()
+        obj = Injector()
 
-        self.assertEqual([], list(c))
+        self.assertEqual([], list(obj))
 
     def test_list_should_return_keys(self) -> None:
 
-        c = Container()
-        c["apple"] = None
-        c["banana"] = None
-        c["cherry"] = None
+        obj = Injector()
+        obj["apple"] = None
+        obj["banana"] = None
+        obj["cherry"] = None
 
-        self.assertListEqual(["apple", "banana", "cherry"], list(c))
+        self.assertListEqual(["apple", "banana", "cherry"], list(obj))
 
     def test_del_missing_should_raise_error(self) -> None:
 
-        c = Container()
+        obj = Injector()
 
         with self.assertRaises(KeyError):
-            del c["key"]
+            del obj["key"]
 
     @parameterized.expand(DATA_TYPES_PARAMETRIZED_INPUT)  # type: ignore
     def test_del_should_remove_value(self, key: str, val: Any) -> None:
 
-        c = Container()
-        c[key] = val
-        del c[key]
+        obj = Injector()
+        obj[key] = val
+        del obj[key]
 
         with self.assertRaises(KeyError):
-            c["key"]
+            obj["key"]
 
     def test_clear_empty_should_reset(self) -> None:
 
-        c = Container()
-        c.clear()
+        obj = Injector()
+        obj.clear()
 
-        self.assertEqual(0, len(c))
+        self.assertEqual(0, len(obj))
 
     def test_clear_should_clear(self) -> None:
 
-        c = Container()
-        c["apple"] = None
-        c["banana"] = None
-        c["cherry"] = None
-        c.clear()
+        obj = Injector()
+        obj["apple"] = None
+        obj["banana"] = None
+        obj["cherry"] = None
+        obj.clear()
 
-        self.assertEqual(0, len(c))
+        self.assertEqual(0, len(obj))
 
     @parameterized.expand(DATA_TYPES_PARAMETRIZED_INPUT)  # type: ignore
     def test_get_should_return_value(self, key: str, val: Any) -> None:
 
-        c = Container()
-        c[key] = val
+        obj = Injector()
+        obj[key] = val
 
-        self.assertEqual(val, c.get(key, None))
+        self.assertEqual(val, obj.get(key, None))
 
     @parameterized.expand(DATA_TYPES_PARAMETRIZED_INPUT)  # type: ignore
     def test_get_should_return_default(self, key: str, val: Any) -> None:
 
-        c = Container()
-        c[key] = val
+        obj = Injector()
+        obj[key] = val
 
-        self.assertIsNone(c.get("non-existent", None))
+        self.assertIsNone(obj.get("non-existent", None))
 
     def test_keys_should_return_list(self) -> None:
 
-        c = Container()
-        c["apple"] = None
-        c["banana"] = None
-        c["cherry"] = None
+        obj = Injector()
+        obj["apple"] = None
+        obj["banana"] = None
+        obj["cherry"] = None
 
-        self.assertListEqual(["apple", "banana", "cherry"], [*c.keys()])
+        self.assertListEqual(["apple", "banana", "cherry"], [*obj.keys()])
 
     def test_pop_should_return_offset_and_remove(self) -> None:
 
-        c = Container()
-        c["1"] = "one"
-        c["2"] = "two"
+        obj = Injector()
+        obj["1"] = "one"
+        obj["2"] = "two"
 
-        val = c.pop("1")
+        val = obj.pop("1")
         self.assertEqual("one", val)
-        self.assertEqual(1, len(c))
+        self.assertEqual(1, len(obj))
 
     def test_values_should_return_list(self) -> None:
 
-        c = Container()
-        c["1"] = lambda x: "one"
-        c["2"] = lambda x: "two"
-        c["1 + 2"] = lambda x: "{} + {}".format(x["1"], x["2"])
+        obj = Injector()
+        obj["1"] = lambda x: "one"
+        obj["2"] = lambda x: "two"
+        obj["1 + 2"] = lambda x: "{} + {}".format(x["1"], x["2"])
 
-        self.assertListEqual(["one", "two", "one + two"], [*c.values()])
+        self.assertListEqual(["one", "two", "one + two"], [*obj.values()])
 
     def test_items_should_return_list(self) -> None:
 
-        c = Container()
-        c["1"] = lambda x: "one"
-        c["2"] = lambda x: "two"
-        c["1 + 2"] = lambda x: "{} + {}".format(x["1"], x["2"])
+        obj = Injector()
+        obj["1"] = lambda x: "one"
+        obj["2"] = lambda x: "two"
+        obj["1 + 2"] = lambda x: "{} + {}".format(x["1"], x["2"])
 
         self.assertListEqual(
-            [("1", "one"), ("2", "two"), ("1 + 2", "one + two")], [*c.items()]
+            [("1", "one"), ("2", "two"), ("1 + 2", "one + two")], [*obj.items()]
         )
 
     def test_copy_should_return_warmed_copy(self) -> None:
 
-        c = Container()
-        c["1"] = lambda x: "one"
-        c["2"] = lambda x: "two"
-        c["1 + 2"] = lambda x: "{} + {}".format(x["1"], x["2"])
+        obj = Injector()
+        obj["1"] = lambda x: "one"
+        obj["2"] = lambda x: "two"
+        obj["1 + 2"] = lambda x: "{} + {}".format(x["1"], x["2"])
 
-        self.assertDictEqual({"1": "one", "1 + 2": "one + two", "2": "two"}, c.copy())
+        self.assertDictEqual({"1": "one", "1 + 2": "one + two", "2": "two"}, obj.copy())
 
     def test_update_should_change_value(self) -> None:
 
-        c = Container()
-        c["1"] = lambda x: "one"
-        c.update({"1": lambda x: "uno"})
+        obj = Injector()
+        obj["1"] = lambda x: "one"
+        obj.update({"1": lambda x: "uno"})
 
-        self.assertEqual("uno", c["1"])
+        self.assertEqual("uno", obj["1"])
 
     def test_update_should_raise_error(self) -> None:
 
-        c = Container()
-        c["1"] = lambda x: "one"
-        _ = c["1"]
+        obj = Injector()
+        obj["1"] = lambda x: "one"
+        _ = obj["1"]
 
         with self.assertRaises(FrozenServiceException):
-            c.update({"1": lambda x: "uno"})
+            obj.update({"1": lambda x: "uno"})

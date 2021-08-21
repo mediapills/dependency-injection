@@ -10,7 +10,7 @@ from typing import Union
 from mediapills.dependency_injection.exceptions import FrozenServiceException
 from mediapills.dependency_injection.exceptions import UnknownIdentifierException
 
-__all__ = ["Container"]
+__all__ = ["Injector"]
 
 
 def handle_unknown_identifier(func: Callable[[Any, str], Any]) -> Any:
@@ -27,7 +27,7 @@ def handle_unknown_identifier(func: Callable[[Any, str], Any]) -> Any:
 
 
 # TODO make `dir(dict)` for more info
-class Container(dict):  # type: ignore
+class Injector(dict):  # type: ignore
     def __init__(self, *args, **kw) -> None:  # type: ignore
         super().__init__(*args, **kw)
 
