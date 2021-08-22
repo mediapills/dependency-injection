@@ -12,7 +12,9 @@ dependency (a service) into the client that uses it.
 Dependency injection solves the following problems:
 
 # How can a class be independent of how the objects on which it depends are created?
+
 # How can the way objects are created be specified in separate configuration files?
+
 # How can an application support different configurations?
 
 Creating objects directly within the class commits the class to particular
