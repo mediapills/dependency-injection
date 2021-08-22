@@ -160,12 +160,12 @@ object:
 .. code-block:: python
 
     # define some services
-    injector['session_storage'] = lambda i: (
+    injector['session_storage'] = lambda di: (
         SessionStorage('SESSION_ID')
     )
 
-    injector['session'] = lambda i: (
-        Session(i['session_storage'])
+    injector['session'] = lambda di: (
+        Session(di['session_storage'])
     )
 
 Notice that the anonymous function has access to the current injector
@@ -194,8 +194,8 @@ anonymous function with the ``factory()`` method
 
 .. code-block:: python
 
-    injector['session'] = injector.factory(lambda i: (
-        Session(i['session_storage'])
+    injector['session'] = injector.factory(lambda di: (
+        Session(di['session_storage'])
     ))
 
 Now, each call to ``injector['session']`` returns a new instance of the
@@ -217,8 +217,8 @@ If you change the ``session_storage`` service definition like below:
 
 .. code-block:: python
 
-    injector['session_storage'] = lambda i: (
-        i['session_storage_cls'](i['cookie_name'])
+    injector['session_storage'] = lambda di: (
+        di['session_storage_cls'](di['cookie_name'])
     )
 
 You can now easily change the cookie name by overriding the
@@ -246,12 +246,12 @@ run on your service just after it is created:
 
 .. code-block:: python
 
-    injector['session_storage'] = lambda i: (
-        i['session_storage_class'](i['cookie_name'])
+    injector['session_storage'] = lambda di: (
+        di['session_storage_class'](di['cookie_name'])
     )
 
-    def session_storage_ext(storage, i):
-        # Do something with storage
+    def session_storage_ext(storage: Callable, di: Injector):
+        # Do something with base storage using di
 
         return storage
 
@@ -269,8 +269,8 @@ raw access to this function, you can use the ``raw()`` method:
 
 .. code-block:: python
 
-    injector['session'] = lambda c: (
-        Session(c['session_storage'])
+    injector['session'] = lambda di: (
+        Session(di['session_storage'])
     )
 
     sessionFunction = container.raw('session')

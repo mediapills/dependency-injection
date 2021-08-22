@@ -7,6 +7,9 @@ from parameterized import parameterized
 
 from mediapills.dependency_injection import Injector
 from mediapills.dependency_injection.exceptions import FrozenServiceException
+from mediapills.dependency_injection.exceptions import InvalidServiceIdentifierException
+from mediapills.dependency_injection.exceptions import ProtectedServiceException
+from mediapills.dependency_injection.exceptions import UnknownIdentifierException
 
 DATA_TYPES_PARAMETRIZED_INPUT = [
     ("str", "value"),  # Check text type (str)
@@ -176,7 +179,7 @@ class TestInjectorBase(unittest.TestCase):
 
 
 class TestInjector(unittest.TestCase):
-    def test_warmed_raw_should_be_same_as_init(self) -> None:
+    def test_raw_warmed_should_be_same_as_initial(self) -> None:
         func = lambda i: "test"  # noqa: E731
 
         obj = Injector()
@@ -186,7 +189,7 @@ class TestInjector(unittest.TestCase):
 
         self.assertEqual(func, obj.raw("func"))
 
-    def test_cold_raw_should_be_same_as_init(self) -> None:
+    def test_raw_cold_should_be_same_as_initial(self) -> None:
         func = lambda i: "test"  # noqa: E731
 
         obj = Injector()
@@ -194,7 +197,7 @@ class TestInjector(unittest.TestCase):
 
         self.assertEqual(func, obj.raw("func"))
 
-    def test_protected_should_return_different(self) -> None:
+    def test_call_protected_should_return_different(self) -> None:
         obj = Injector()
         obj["func"] = lambda i: "time: '{}', rnad: '{}'".format(
             time.time() * 1000, random()
@@ -203,7 +206,7 @@ class TestInjector(unittest.TestCase):
 
         self.assertNotEqual(obj["func"], obj["func"])
 
-    def test_non_protected_should_return_same(self) -> None:
+    def test_call_non_protected_should_return_same(self) -> None:
         obj = Injector()
         obj["func"] = lambda i: "time: '{}', rnad: '{}'".format(
             time.time() * 1000, random()
@@ -211,3 +214,44 @@ class TestInjector(unittest.TestCase):
 
         self.assertEqual(obj["func"], obj["func"])
 
+    def test_extend_nonexistent_should_raise_error(self) -> None:
+
+        obj = Injector()
+
+        with self.assertRaises(UnknownIdentifierException):
+            obj.extend("any", lambda i: "error")
+
+    def test_extend_frozen_should_raise_error(self) -> None:
+
+        obj = Injector()
+        obj["any"] = lambda i: "test"
+        _ = obj["any"]
+
+        with self.assertRaises(FrozenServiceException):
+            obj.extend("any", lambda i: "error")
+
+    def test_extend_protected_should_raise_error(self) -> None:
+
+        obj = Injector()
+        obj["any"] = lambda i: "test"
+        obj.protect("any")
+
+        with self.assertRaises(ProtectedServiceException):
+            obj.extend("any", lambda i: "error")
+
+    def test_extend_scalar_should_raise_error(self) -> None:
+
+        obj = Injector()
+        obj["any"] = "test"
+
+        with self.assertRaises(InvalidServiceIdentifierException):
+            obj.extend("any", lambda i: "error")
+
+    def test_extend_should_ok(self) -> None:
+
+        obj = Injector()
+        obj["any"] = lambda i: "base"
+
+        obj.extend("any", lambda base, di: "extended " + base)
+
+        self.assertEqual("extended base", obj["any"])

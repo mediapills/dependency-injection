@@ -1,29 +1,34 @@
-class BaseContainerException(Exception):
+class BaseInjectorException(Exception):
 
     pass
 
 
-class ExpectedInvokableException(BaseContainerException):  # dead: disable
+class ExpectedInvokableException(BaseInjectorException):  # dead: disable
 
     pass
 
 
-class FrozenServiceException(BaseContainerException):
+class FrozenServiceException(BaseInjectorException):
 
     pass
 
 
-class InvalidServiceIdentifierException(BaseContainerException):  # dead: disable
+class ProtectedServiceException(BaseInjectorException):
 
     pass
 
 
-class UnknownIdentifierException(BaseContainerException, KeyError):
+class InvalidServiceIdentifierException(BaseInjectorException):
+
+    pass
+
+
+class UnknownIdentifierException(BaseInjectorException, KeyError):
 
     pass
 
 
 class RecursionInfiniteLoopError(  # dead: disable
-    BaseContainerException, RecursionError
+    BaseInjectorException, RecursionError
 ):
     pass

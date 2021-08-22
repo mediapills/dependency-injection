@@ -9,6 +9,8 @@ from typing import Set
 from typing import Union
 
 from mediapills.dependency_injection.exceptions import FrozenServiceException
+from mediapills.dependency_injection.exceptions import InvalidServiceIdentifierException
+from mediapills.dependency_injection.exceptions import ProtectedServiceException
 from mediapills.dependency_injection.exceptions import UnknownIdentifierException
 
 __all__ = ["Injector"]
@@ -32,10 +34,11 @@ class Injector(dict):  # type: ignore
     def __init__(self, *args, **kw) -> None:  # type: ignore
         super().__init__(*args, **kw)
 
+        self._warmed: bool = False
+        self._raw: Dict[Any, Any] = dict()
         self._protected: Set[Any] = set()
         self._frozen: Set[Any] = set()
-        self._raw: Dict[Any, Any] = dict()
-        self._warmed: bool = False
+        self._factories: Dict[str, Any] = dict()
 
     def warm_up(self) -> None:
         """process all offsets."""
@@ -86,6 +89,7 @@ class Injector(dict):  # type: ignore
         self._protected.discard(key)
         self._frozen.discard(key)
         self._raw.pop(key, None)
+        self._factories.pop(key, None)
 
         dict.__delitem__(self, key)
 
@@ -97,6 +101,7 @@ class Injector(dict):  # type: ignore
         self._protected.clear()
         self._frozen.clear()
         self._raw.clear()
+        self._factories.clear()
 
         dict.clear(self)
 
@@ -147,10 +152,22 @@ class Injector(dict):  # type: ignore
 
     def extend(self, key: Any, callable: Callable[[Any], Any]) -> None:  # dead: disable
         """Extends an object definition."""
+        if key not in self:
+            raise UnknownIdentifierException(key)
 
-        raise NotImplementedError
+        if key in self._frozen:
+            raise FrozenServiceException(key)
 
-    def factory(self, callable: Callable[[Any], Any]) -> None:  # dead: disable
-        """Marks a callable as being a factory service."""
+        if key in self._protected:
+            raise ProtectedServiceException(key)
 
-        raise NotImplementedError
+        raw = self.raw(key)
+
+        if not hasattr(raw, "__call__"):
+            raise InvalidServiceIdentifierException(key)
+
+        extended = lambda di, func=callable, base=raw: func(base(di), di)  # noqa: E731
+
+        self._factories[key] = extended
+
+        self.__setitem__(key, extended)
