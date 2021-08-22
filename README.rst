@@ -192,8 +192,8 @@ anonymous function with the ``factory()`` method
 
 .. code-block:: python
 
-    injector['session'] = injector.factory(lambda c: Injector (
-        return Session(c['session_storage'])
+    injector['session'] = injector.factory(lambda i: (
+        Session(i['session_storage'])
     ))
 
 Now, each call to ``injector['session']`` returns a new instance of the
@@ -248,11 +248,12 @@ run on your service just after it is created:
         i['session_storage_class'](i['cookie_name'])
     )
 
-    injector.extend('session_storage', lambda storage, i: (
-        storage...()
+    def session_storage_ext(storage, i):
+        # Do something with storage
 
         return storage
-    ))
+
+    injector.extend('session_storage', session_storage_ext)
 
 The first argument is the name of the service to extend, the second a function
 that gets access to the object instance and the container.

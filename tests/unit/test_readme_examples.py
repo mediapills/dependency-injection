@@ -50,16 +50,14 @@ class TestInjectorExamples(unittest.TestCase):
 
         obj = Injector()
 
-        obj['cookie_name'] = 'SESSION_ID'
-        obj['session_storage_cls'] = DummySessionStorage
-        obj['session_storage'] = lambda i: (
-            i['session_storage_cls'](i['cookie_name'])
-        )
+        obj["cookie_name"] = "SESSION_ID"
+        obj["session_storage_cls"] = DummySessionStorage
+        obj["session_storage"] = lambda i: (i["session_storage_cls"](i["cookie_name"]))
 
-        _ = obj['session_storage']
-        storage = obj['session_storage']
+        _ = obj["session_storage"]
+        storage = obj["session_storage"]
 
-        self.assertEqual('SESSION_ID', storage.cookie_name)
+        self.assertEqual("SESSION_ID", storage.cookie_name)
 
     def test_example_modifying_services_after_definition(self) -> None:
 
