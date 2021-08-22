@@ -234,7 +234,7 @@ parameters:
 
 .. code-block:: php
 
-    injector['random_func'] = lambda: rand()
+    injector['random_func'] = lambda i: rand()
     injector.protect('random_func')
 
 Modifying Services after Definition

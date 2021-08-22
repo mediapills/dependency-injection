@@ -48,12 +48,7 @@ class Injector(dict):  # type: ignore
         """Execute function or object as a function."""
         raw = dict.__getitem__(self, key)
 
-        if (
-            key in self._raw
-            or key in self._protected
-            or not hasattr(raw, "__call__")
-            or inspect.isclass(raw)
-        ):
+        if key in self._raw or not hasattr(raw, "__call__") or inspect.isclass(raw):
             return
 
         result = raw(self)
@@ -67,6 +62,9 @@ class Injector(dict):  # type: ignore
         """Returns the value at specified offset."""
 
         # TODO: add factories check
+
+        if key in self._protected:
+            return dict.__getitem__(self, key)(self)
 
         self.process(key)
 
@@ -132,17 +130,6 @@ class Injector(dict):  # type: ignore
 
         return dict.update(self)
 
-    def factory(self, callable: Callable[[Any], Any]) -> None:  # dead: disable
-        """Marks a callable as being a factory service."""
-
-        raise NotImplementedError
-
-    @handle_unknown_identifier  # dead: disable
-    def protect(self, key: Any) -> None:
-        """Protects a callable from being interpreted as a service."""
-
-        self._protected.add(key)
-
     @handle_unknown_identifier
     def raw(self, key: Any) -> Any:
         """Gets a parameter or the closure defining an object."""
@@ -152,7 +139,18 @@ class Injector(dict):  # type: ignore
 
         return dict.__getitem__(self, key)
 
+    @handle_unknown_identifier  # dead: disable
+    def protect(self, key: Any) -> None:
+        """Protects a callable from being interpreted as a service."""
+
+        self._protected.add(key)
+
     def extend(self, key: Any, callable: Callable[[Any], Any]) -> None:  # dead: disable
         """Extends an object definition."""
+
+        raise NotImplementedError
+
+    def factory(self, callable: Callable[[Any], Any]) -> None:  # dead: disable
+        """Marks a callable as being a factory service."""
 
         raise NotImplementedError

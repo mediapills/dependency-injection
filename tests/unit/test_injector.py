@@ -1,4 +1,6 @@
+import time
 import unittest
+from random import random
 from typing import Any
 
 from parameterized import parameterized
@@ -171,3 +173,41 @@ class TestInjectorBase(unittest.TestCase):
 
         with self.assertRaises(FrozenServiceException):
             obj.update({"1": lambda x: "uno"})
+
+
+class TestInjector(unittest.TestCase):
+    def test_warmed_raw_should_be_same_as_init(self) -> None:
+        func = lambda i: "test"  # noqa: E731
+
+        obj = Injector()
+        obj["func"] = func
+
+        _ = obj["func"]
+
+        self.assertEqual(func, obj.raw("func"))
+
+    def test_cold_raw_should_be_same_as_init(self) -> None:
+        func = lambda i: "test"  # noqa: E731
+
+        obj = Injector()
+        obj["func"] = func
+
+        self.assertEqual(func, obj.raw("func"))
+
+    def test_protected_should_return_different(self) -> None:
+        obj = Injector()
+        obj["func"] = lambda i: "time: '{}', rnad: '{}'".format(
+            time.time() * 1000, random()
+        )
+        obj.protect("func")
+
+        self.assertNotEqual(obj["func"], obj["func"])
+
+    def test_non_protected_should_return_same(self) -> None:
+        obj = Injector()
+        obj["func"] = lambda i: "time: '{}', rnad: '{}'".format(
+            time.time() * 1000, random()
+        )
+
+        self.assertEqual(obj["func"], obj["func"])
+
