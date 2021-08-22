@@ -1,3 +1,4 @@
+import inspect
 from functools import wraps
 from typing import Any
 from typing import Callable
@@ -47,7 +48,12 @@ class Injector(dict):  # type: ignore
         """Execute function or object as a function."""
         raw = dict.__getitem__(self, key)
 
-        if key in self._raw or key in self._protected or not hasattr(raw, "__call__"):
+        if (
+            key in self._raw
+            or key in self._protected
+            or not hasattr(raw, "__call__")
+            or inspect.isclass(raw)
+        ):
             return
 
         result = raw(self)
