@@ -144,9 +144,11 @@ class Injector(dict):  # type: ignore
 
         return dict.__getitem__(self, key)
 
-    @handle_unknown_identifier  # dead: disable
-    def protect(self, key: Any) -> None:
+    def protect(self, key: Any) -> None:  # dead: disable
         """Protects a callable from being interpreted as a service."""
+
+        if key not in self:
+            raise UnknownIdentifierException(key)
 
         self._protected.add(key)
 

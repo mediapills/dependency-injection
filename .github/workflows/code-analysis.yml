@@ -25,18 +25,34 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install --upgrade tox
 
-    - name: Validate python sorce code
+    - name: Run pre-commit hooks
       run: |
-        make validate
+        make pre-commit
+
+    - name: Python style guide enforcement
+      run: |
+        make linter
+
+    - name: Static Typing checks
+      run: |
+        make mypy
 
     - name: Run unit tests
       run: |
         make test
 
     - name: Check python source code coverage
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       run: |
         make coverage
+        pip install codecov>=1.4.0
+        codecov
 
     - name: Check package build
       run: |
         make build
+
+    - name: Upload coverage to Codecov
+      run: |
+        make codecov
