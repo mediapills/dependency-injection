@@ -2,6 +2,10 @@
    :target: https://codeclimate.com/github/mediapills/dependency-injection/maintainability
    :alt: Maintainability
 
+.. image:: https://requires.io/github/mediapills/dependency-injection/requirements.svg?branch=main
+     :target: https://requires.io/github/mediapills/dependency-injection/requirements/?branch=main
+     :alt: Requirements Status
+
 Overview
 --------
 
