@@ -6,6 +6,11 @@
      :target: https://requires.io/github/mediapills/dependency-injection/requirements/?branch=main
      :alt: Requirements Status
 
+.. image:: https://img.shields.io/badge/License-MIT-yellow.svg
+     :target: https://img.shields.io/badge/License-MIT-yellow.svg
+     :alt: License: MIT
+
+
 Overview
 --------
 
