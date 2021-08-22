@@ -26,7 +26,7 @@ DATA_TYPES_PARAMETRIZED_INPUT = [
 ]
 
 
-class TestContainerBase(unittest.TestCase):
+class TestInjectorBase(unittest.TestCase):
     def test_get_missing_should_raise_error(self) -> None:
 
         obj = Injector()
