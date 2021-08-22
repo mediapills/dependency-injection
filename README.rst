@@ -1,19 +1,19 @@
 Overview
-~~~~~~~~
+--------
 
-In software engineering, dependency injection is a technique in which an object
-receives other objects that it depends on, called dependencies. Typically, the
-receiving object is called a client and the passed-in ('injected') object is
-called a service. The code that passes the service to the client is called the
-injector. Instead of the client specifying which service it will use, the
-injector tells the client what service to use. The 'injection' refers to the
-passing of a dependency (a service) into the client that uses it.
+**Dependency Injection** is a technique in which an object receives other
+objects that it depends on, called dependencies. Typically, the receiving
+object is called a client and the passed-in ('injected') object is called a
+service. The code that passes the service to the client is called the injector.
+Instead of the client specifying which service it will use, the injector tells
+the client what service to use. The 'injection' refers to the passing of a
+dependency (a service) into the client that uses it.
 
 Dependency injection solves the following problems:
 
-* How can a class be independent of how the objects on which it depends are created?
-* How can the way objects are created be specified in separate configuration files?
-* How can an application support different configurations?
+# How can a class be independent of how the objects on which it depends are created?
+# How can the way objects are created be specified in separate configuration files?
+# How can an application support different configurations?
 
 Creating objects directly within the class commits the class to particular
 implementations. This makes it difficult to change the instantiation at
@@ -37,6 +37,30 @@ Dependency injection involves four roles:
 * the client object, whose behavior depends on the services it uses
 * the interfaces that define how the client may use the services
 * the injector, which constructs the services and injects them into the client
+
+Any object that may be used can be considered a **service**. Any object that
+uses other objects can be considered a **client**. The names relate only to the
+role the objects play in an injection.
+
+The **interfaces** are the types the client expects its dependencies to be. The
+client should not know the specific implementation of its dependencies, only
+know the interface's name and API. As a result, the client will not need to
+change even if what is behind the interface changes. Dependency injection can
+work with true interfaces or abstract classes, but also concrete services,
+though this would violate the dependency inversion principle and sacrifice the
+dynamic decoupling that enables testing. It is only required that the client
+never treats its interfaces as concrete by constructing or extending them. If
+the interface is refactored from a class to an interface type (or vice versa)
+the client will need to be recompiled. This is significant if the client and
+services are published separately.
+
+The **injector** introduces services to the client. Often, it also constructs
+the client. An injector may connect a complex object graph by treating the same
+object as both a client at one point and as a service at another. The injector
+itself may actually be many objects working together, but may not be the client
+(as this would create a circular dependency). The injector may be referred to
+as an assembler, provider, container, factory, builder, spring, or construction
+code.
 
 Pros
 ~~~~
@@ -91,7 +115,7 @@ be harder to manage.
 Encourage dependence on a framework.
 
 Installation
-~~~~~~~~~~~~
+------------
 
 Before using mediapills.dependency_injection in your project, add it to your ``requirements.txt``
 file:
@@ -108,7 +132,7 @@ or
 
 
 Usage
-~~~~~
+-----
 
 Creating a injector is a matter of creating a ``Injector`` instance:
 
@@ -139,7 +163,7 @@ object:
     )
 
     injector['session'] = lambda i: (
-        return Session(c['session_storage'])
+        Session(i['session_storage'])
     )
 
 Notice that the anonymous function has access to the current injector
@@ -185,7 +209,7 @@ the outside and to store global values:
 
     # define some parameters
     injector['cookie_name'] = 'SESSION_ID'
-    injector['session_storage_cls'] = 'SessionStorage'
+    injector['session_storage_cls'] = SessionStorage
 
 If you change the ``session_storage`` service definition like below:
 
