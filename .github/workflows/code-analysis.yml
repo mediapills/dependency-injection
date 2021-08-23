@@ -37,9 +37,135 @@ jobs:
       run: |
         make mypy
 
+  test_py36:
+    name: Run Tests on Python 3.6
+    runs-on: ubuntu-latest
+    needs: checks
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.6
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.6
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install --upgrade tox
+
     - name: Run unit tests
+      env:
+        TOXENV: py36
       run: |
         make test
+
+    - name: Check package build
+      run: |
+        make build
+
+  test_py37:
+    name: Run Tests on Python 3.7
+    runs-on: ubuntu-latest
+    needs: checks
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install --upgrade tox
+
+    - name: Run unit tests
+      env:
+        TOXENV: py37
+      run: |
+        make test
+
+    - name: Check package build
+      run: |
+        make build
+
+  test_py38:
+    name: Run Tests on Python 3.8
+    runs-on: ubuntu-latest
+    needs: checks
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install --upgrade tox
+
+    - name: Run unit tests
+      env:
+        TOXENV: py38
+      run: |
+        make test
+
+    - name: Check package build
+      run: |
+        make build
+
+  test_py39:
+    name: Run Tests on Python 3.9
+    runs-on: ubuntu-latest
+    needs: checks
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install --upgrade tox
+
+    - name: Run unit tests
+      env:
+        TOXENV: py39
+      run: |
+        make test
+
+    - name: Check package build
+      run: |
+        make build
+
+  coverage:
+    name: Check code coverage on Python 3.8
+    runs-on: ubuntu-latest
+    needs: [test_py36, test_py37, test_py38, test_py39]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install --upgrade tox
 
     - name: Check python source code coverage
       env:
@@ -48,7 +174,3 @@ jobs:
         make coverage
         pip install codecov>=1.4.0
         codecov
-
-    - name: Check package build
-      run: |
-        make build
