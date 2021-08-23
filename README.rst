@@ -14,6 +14,10 @@
     :target: https://pypi.python.org/pypi/mediapills.dependency_injection
     :alt: Supported Python versions
 
+.. image:: https://static.pepy.tech/personalized-badge/mediapills-dependency-injection?period=month&units=international_system&left_color=black&right_color=orange&left_text=Downloads
+    :target: https://pepy.tech/project/mediapills-dependency-injection
+    :alt: Downloads
+
 .. image:: https://requires.io/github/mediapills/dependency-injection/requirements.svg?branch=main
      :target: https://requires.io/github/mediapills/dependency-injection/requirements/?branch=main
      :alt: Requirements Status
