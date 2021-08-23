@@ -1,6 +1,10 @@
 .. image:: https://api.codeclimate.com/v1/badges/31682a7859575a4f64b0/maintainability
-   :target: https://codeclimate.com/github/mediapills/dependency-injection/maintainability
-   :alt: Maintainability
+    :target: https://codeclimate.com/github/mediapills/dependency-injection/maintainability
+    :alt: Maintainability
+
+.. image:: https://codecov.io/gh/mediapills/dependency-injection/branch/main/graph/badge.svg?token=USMBZ0W54N
+    :target: https://codecov.io/gh/mediapills/dependency-injection
+    :alt: Absolute coverage and coverage changes
 
 .. image:: https://requires.io/github/mediapills/dependency-injection/requirements.svg?branch=main
      :target: https://requires.io/github/mediapills/dependency-injection/requirements/?branch=main

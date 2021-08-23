@@ -52,7 +52,3 @@ jobs:
     - name: Check package build
       run: |
         make build
-
-    - name: Upload coverage to Codecov
-      run: |
-        make codecov
