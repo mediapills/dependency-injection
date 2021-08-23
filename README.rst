@@ -10,6 +10,10 @@
     :target: https://github.com/mediapills/dependency-injection/actions
     :alt: GitHub Workflow Actions Status
 
+.. image:: https://pypip.in/py_versions/mediapills.dependency_injection/badge.svg
+    :target: https://pypi.python.org/pypi/mediapills.dependency_injection
+    :alt: Supported Python versions
+
 .. image:: https://requires.io/github/mediapills/dependency-injection/requirements.svg?branch=main
      :target: https://requires.io/github/mediapills/dependency-injection/requirements/?branch=main
      :alt: Requirements Status
