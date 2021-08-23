@@ -6,6 +6,10 @@
     :target: https://codecov.io/gh/mediapills/dependency-injection
     :alt: Absolute coverage and coverage changes
 
+.. image:: https://github.com/mediapills/dependency-injection/workflows/CI%20Build/badge.svg?branch=main
+    :target: https://github.com/mediapills/dependency-injection/actions
+    :alt: GitHub Workflow Actions Status
+
 .. image:: https://requires.io/github/mediapills/dependency-injection/requirements.svg?branch=main
      :target: https://requires.io/github/mediapills/dependency-injection/requirements/?branch=main
      :alt: Requirements Status
