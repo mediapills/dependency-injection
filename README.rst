@@ -19,7 +19,7 @@
      :alt: Requirements Status
 
 .. image:: https://img.shields.io/badge/License-MIT-yellow.svg
-     :target: https://img.shields.io/badge/License-MIT-yellow.svg
+     :target: https://github.com/mediapills/dependency-injection/blob/main/LICENSE.md
      :alt: License: MIT
 
 
