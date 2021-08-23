@@ -8,9 +8,10 @@ from typing import MutableMapping
 from typing import Set
 from typing import Union
 
+from mediapills.dependency_injection.exceptions import ExpectedInvokableException
 from mediapills.dependency_injection.exceptions import FrozenServiceException
-from mediapills.dependency_injection.exceptions import InvalidServiceIdentifierException
 from mediapills.dependency_injection.exceptions import ProtectedServiceException
+from mediapills.dependency_injection.exceptions import RecursionInfiniteLoopError
 from mediapills.dependency_injection.exceptions import UnknownIdentifierException
 
 __all__ = ["Injector"]
@@ -54,6 +55,11 @@ class Injector(dict):  # type: ignore
         if key in self._raw or not hasattr(raw, "__call__") or inspect.isclass(raw):
             return
 
+        dict.__setitem__(
+            self,
+            key,
+            lambda di, k=key: (_ for _ in ()).throw(RecursionInfiniteLoopError(k)),
+        )
         result = raw(self)
         dict.__setitem__(self, key, result)
         self._raw[key] = raw
@@ -166,7 +172,7 @@ class Injector(dict):  # type: ignore
         raw = self.raw(key)
 
         if not hasattr(raw, "__call__"):
-            raise InvalidServiceIdentifierException(key)
+            raise ExpectedInvokableException(key)
 
         extended = lambda di, func=callable, base=raw: func(base(di), di)  # noqa: E731
 

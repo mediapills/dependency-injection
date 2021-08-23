@@ -6,9 +6,10 @@ from typing import Any
 from parameterized import parameterized
 
 from mediapills.dependency_injection import Injector
+from mediapills.dependency_injection.exceptions import ExpectedInvokableException
 from mediapills.dependency_injection.exceptions import FrozenServiceException
-from mediapills.dependency_injection.exceptions import InvalidServiceIdentifierException
 from mediapills.dependency_injection.exceptions import ProtectedServiceException
+from mediapills.dependency_injection.exceptions import RecursionInfiniteLoopError
 from mediapills.dependency_injection.exceptions import UnknownIdentifierException
 
 DATA_TYPES_PARAMETRIZED_INPUT = [
@@ -32,12 +33,20 @@ DATA_TYPES_PARAMETRIZED_INPUT = [
 
 
 class TestInjectorBase(unittest.TestCase):
+    def test_get_constructor_should_set(self) -> None:
+        obj = Injector(
+            {"param1": "value 1", "param2": lambda di: di["param1"] + " changed"}
+        )
+
+        self.assertEqual("value 1", obj["param1"])
+        self.assertEqual("value 1 changed", obj["param2"])
+
     def test_get_missing_should_raise_error(self) -> None:
 
         obj = Injector()
 
         with self.assertRaises(KeyError):
-            obj["key"]
+            _ = obj["key"]
 
     @parameterized.expand(DATA_TYPES_PARAMETRIZED_INPUT)  # type: ignore
     def test_setter_should_set_value(self, key: str, val: Any) -> None:
@@ -77,7 +86,7 @@ class TestInjectorBase(unittest.TestCase):
         del obj[key]
 
         with self.assertRaises(KeyError):
-            obj["key"]
+            _ = obj["key"]
 
     def test_clear_empty_should_reset(self) -> None:
 
@@ -111,6 +120,14 @@ class TestInjectorBase(unittest.TestCase):
         obj[key] = val
 
         self.assertIsNone(obj.get("non-existent", None))
+
+    def test_recursive_get_should_raise_error(self) -> None:
+        obj = Injector()
+        obj["a"] = lambda di: di["b"]
+        obj["b"] = lambda di: di["a"]
+
+        with self.assertRaises(RecursionInfiniteLoopError):
+            _ = obj["a"]
 
     def test_keys_should_return_list(self) -> None:
 
@@ -244,7 +261,7 @@ class TestInjector(unittest.TestCase):
         obj = Injector()
         obj["any"] = "test"
 
-        with self.assertRaises(InvalidServiceIdentifierException):
+        with self.assertRaises(ExpectedInvokableException):
             obj.extend("any", lambda i: "error")
 
     def test_extend_should_ok(self) -> None:
