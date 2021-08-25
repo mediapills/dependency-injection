@@ -28,7 +28,7 @@ test:
 	tox
 
 validate:
-	tox -e pre-commit; tox -e linter; tox -e mypy
+	tox -e pre-commit,linter,mypy -p all -vv
 
 build:
 	tox -e build
