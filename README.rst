@@ -18,7 +18,7 @@
     :target: https://pypi.python.org/pypi/mediapills.dependency_injection
     :alt: Wheel
 
-.. image:: https://static.pepy.tech/personalized-badge/mediapills-dependency-injection?period=month&units=international_system&left_color=black&right_color=orange&left_text=Downloads
+.. image:: https://static.pepy.tech/personalized-badge/mediapills-dependency-injection?period=month&units=international_system&left_color=black&right_color=blue&left_text=Downloads
     :target: https://pepy.tech/project/mediapills-dependency-injection
     :alt: Downloads
 
