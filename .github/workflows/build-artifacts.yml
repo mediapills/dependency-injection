@@ -1,0 +1,56 @@
+name: Build Distributions
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+
+  build-sdist:
+    name: Build source tarball
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - run: python setup.py sdist
+      - uses: actions/upload-artifact@v2
+        with:
+          path: ./dist/*
+
+  build-wheels:
+    name: Build wheels
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-18.04, windows-latest, macos-latest]
+    env:
+      CIBW_SKIP: cp27-win*
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - run: pip install cibuildwheel==1.8.0
+      - run: cibuildwheel --output-dir wheelhouse
+      - uses: actions/upload-artifact@v2
+        with:
+          path: ./wheelhouse/*.whl
+
+  build-wheels-linux-aarch64:
+    name: Build wheels (ubuntu-latest-aarch64)
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - run: pip install cibuildwheel==1.8.0
+      - run: cibuildwheel --archs aarch64 --output-dir wheelhouse
+      - uses: actions/upload-artifact@v2
+        with:
+          path: ./wheelhouse/*.whl
