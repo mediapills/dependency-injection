@@ -1,3 +1,5 @@
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmediapills%2Fdependency-injection.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmediapills%2Fdependency-injection?ref=badge_shield)
+
 .. image:: https://api.codeclimate.com/v1/badges/31682a7859575a4f64b0/maintainability
     :target: https://codeclimate.com/github/mediapills/dependency-injection/maintainability
     :alt: Maintainability
@@ -309,3 +311,6 @@ raw access to this function, you can use the ``raw()`` method:
     )
 
     sessionFunction = container.raw('session')
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmediapills%2Fdependency-injection.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmediapills%2Fdependency-injection?ref=badge_large)
