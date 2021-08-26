@@ -38,7 +38,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest]
-        python-version: [3.6, 3.7, 3.8, 3.9]
+        python-version: [3.6, 3.7, 3.8, 3.9, pypy3]
         exclude:
           # conserve some osx builders
           - python-version: 3.6
@@ -59,12 +59,18 @@ jobs:
           - python-version: 3.9
             os: ubuntu-latest
             tox-target: py39
+          - python-version: pypy3
+            os: ubuntu-latest
+            tox-target: pypy
           - python-version: 3.7
             os: macos-latest
             tox-target: py37
           - python-version: 3.8
             os: macos-latest
             tox-target: py38
+          - python-version: pypy3
+            os: macos-latest
+            tox-target: pypy
 
     steps:
     - uses: actions/checkout@v2
