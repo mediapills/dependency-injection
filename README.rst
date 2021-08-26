@@ -18,13 +18,17 @@
     :target: https://pypi.python.org/pypi/mediapills.dependency_injection
     :alt: Wheel
 
-.. image:: https://static.pepy.tech/personalized-badge/mediapills-dependency-injection?period=month&units=international_system&left_color=black&right_color=blue&left_text=Downloads
+.. image:: https://static.pepy.tech/personalized-badge/mediapills-dependency-injection?period=month&units=international_system&left_color=gray&right_color=blue&left_text=Downloads
     :target: https://pepy.tech/project/mediapills-dependency-injection
     :alt: Downloads
 
 .. image:: https://requires.io/github/mediapills/dependency-injection/requirements.svg?branch=main
      :target: https://requires.io/github/mediapills/dependency-injection/requirements/?branch=main
      :alt: Requirements Status
+
+.. image:: https://bestpractices.coreinfrastructure.org/projects/5169/badge
+     :target: https://bestpractices.coreinfrastructure.org/projects/5169
+     :alt: CII Best Practices
 
 .. image:: https://img.shields.io/badge/License-MIT-yellow.svg
      :target: https://github.com/mediapills/dependency-injection/blob/main/LICENSE.md
