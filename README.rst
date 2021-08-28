@@ -159,25 +159,25 @@ file:
 
 .. code-block:: bash
 
-    $ echo "-e git+ssh://git@github.com/mediapills/dependency_injection.git@0.0.2#egg=mediapills.dependency_injection" >> requirements.txt
+    $ echo "-e git+ssh://git@github.com/mediapills/dependency_injection.git@0.1.0#egg=mediapills.dependency_injection" >> requirements.txt
 
 or
 
 .. code-block:: bash
 
-    $ echo "mediapills.dependency_injection==0.0.2" >> requirements.txt
+    $ echo "mediapills.dependency_injection==0.1.0" >> requirements.txt
 
 
 Usage
 -----
 
-Creating a injector is a matter of creating a ``Injector`` instance:
+Creating a injector is a matter of creating a ``Container`` instance:
 
 .. code-block:: python
 
-    from mediapills.dependency_injection import Injector
+    from mediapills.dependency_injection import Container
 
-    injector = Injector()
+    injector = Container()
 
 As many other dependency injection containers, mediapills.dependency_injection manages two
 different kind of data: **services** and **parameters**.
@@ -223,9 +223,9 @@ Using the defined services is also very easy:
 Defining Factory Services
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-By default, each time you get a service, Injector returns the **same instance**
-of it. If you want a different instance to be returned for all calls, wrap your
-anonymous function with the ``factory()`` method
+By default, each time you get a service, ``Container`` returns the
+**same instance** of it. If you want a different instance to be returned for
+all calls, wrap your anonymous function with the ``factory()`` method
 
 .. code-block:: python
 
@@ -285,7 +285,7 @@ run on your service just after it is created:
         di['session_storage_class'](di['cookie_name'])
     )
 
-    def session_storage_ext(storage: Callable, di: Injector):
+    def session_storage_ext(storage: Callable, di: Container):
         # Do something with base storage using di
 
         return storage
@@ -298,9 +298,9 @@ that gets access to the object instance and the container.
 Fetching the Service Creation Function
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When you access an object, Injector automatically calls the anonymous function
-that you defined, which creates the service object for you. If you want to get
-raw access to this function, you can use the ``raw()`` method:
+When you access an object, ``Container`` automatically calls the anonymous
+function that you defined, which creates the service object for you. If you
+want to get raw access to this function, you can use the ``raw()`` method:
 
 .. code-block:: python
 
