@@ -1,6 +1,6 @@
 import unittest
 
-from mediapills.dependency_injection import Injector
+from mediapills.dependency_injection import Container
 
 
 class DummySessionStorage:
@@ -24,9 +24,9 @@ class DummySession:
         return self._storage
 
 
-class TestInjectorExamples(unittest.TestCase):
+class TestContainerExamples(unittest.TestCase):
     def test_defining_services_section(self) -> None:
-        obj = Injector()
+        obj = Container()
 
         obj["session_storage"] = lambda i: (DummySessionStorage("SESSION_ID"))
 
@@ -48,7 +48,7 @@ class TestInjectorExamples(unittest.TestCase):
 
     def test_defining_defining_parameters_section(self) -> None:
 
-        obj = Injector()
+        obj = Container()
 
         obj["cookie_name"] = "SESSION_ID"
         obj["session_storage_cls"] = DummySessionStorage

@@ -1,4 +1,5 @@
 import inspect
+import warnings
 from functools import wraps
 from typing import Any
 from typing import Callable
@@ -14,7 +15,13 @@ from mediapills.dependency_injection.exceptions import ProtectedServiceException
 from mediapills.dependency_injection.exceptions import RecursionInfiniteLoopError
 from mediapills.dependency_injection.exceptions import UnknownIdentifierException
 
-__all__ = ["Injector"]
+__all__ = ["Container", "Injector"]
+
+"""The stacklevel argument can be used by wrapper functions written in Python."""
+ROUTINE_STACKLEVEL = 2
+
+"""Base class for warnings about deprecated features."""
+WARN_CATEGORY = DeprecationWarning
 
 
 def handle_unknown_identifier(func: Callable[[Any, str], Any]) -> Any:
@@ -30,9 +37,26 @@ def handle_unknown_identifier(func: Callable[[Any, str], Any]) -> Any:
     return wrapped
 
 
-# TODO make `dir(dict)` for more info
 class Injector(dict):  # type: ignore
+    def deprecated(self, version: str, reason: str) -> None:
+        """Issue a warning when the function is used."""
+
+        fmt = (
+            "The class '{name}' is deprecated."
+            " ({reason})"
+            " -- Deprecated since version {version}."
+        )
+
+        msg = fmt.format(name=self.__class__.__name__, reason=reason, version=version)
+
+        warnings.warn(msg, category=WARN_CATEGORY, stacklevel=ROUTINE_STACKLEVEL)
+
     def __init__(self, *args, **kw) -> None:  # type: ignore
+        self.deprecated(
+            version="0.1.1",
+            reason="This class is no longer available. Use {Container} instead.",
+        )
+
         super().__init__(*args, **kw)
 
         self._warmed: bool = False
@@ -42,7 +66,7 @@ class Injector(dict):  # type: ignore
         self._factories: Dict[str, Any] = dict()
 
     def warm_up(self) -> None:
-        """process all offsets."""
+        """Process all offsets."""
 
         if not self._warmed:
             [self.__getitem__(k) for k in self]
@@ -179,3 +203,8 @@ class Injector(dict):  # type: ignore
         self._factories[key] = extended
 
         self.__setitem__(key, extended)
+
+
+class Container(Injector):
+    def deprecated(self, version: str, reason: str) -> None:
+        pass
