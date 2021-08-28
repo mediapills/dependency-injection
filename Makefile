@@ -2,6 +2,7 @@
 
 help:
 	@echo "  coverage   to source code coverage check"
+	@echo "  sphinx     to build documentation"
 	@echo "  help       to show this help"
 	@echo "  linter     to static code analysis"
 	@echo "  mypy       to static type checker"
@@ -15,8 +16,8 @@ coverage:
 linter:
 	tox -e linter
 
-setup:
-	@echo "This function not implemented yet"
+sphinx:
+	tox -e docs
 
 mypy:
 	tox -e mypy
