@@ -1,8 +1,6 @@
 How to contribute
 =================
 
-.. warning:: This Document Page Under Construction
-
 There are lots of ways to contribute to the project. People with different
 expertise can help to improve the web content, the documentation, the code,
 and the tests. Even this README file is a result of collaboration of multiple
@@ -57,25 +55,18 @@ RTC model
 Mediapills supports Review-Then-Commit model of development. The following
 rules are used in the RTC process:
 
-  - a developer should seek peer-review and/or feedback from other developers
-  through the PR mechanism (aka code review).
+- a developer should seek peer-review and/or feedback from other developers
+through the PR mechanism (aka code review).
 
-  - a developer should make a reasonable effort to test the changes before
-  submitting a PR for review.
+- a developer should make a reasonable effort to test the changes before
+submitting a PR for review.
 
-  - any non-document PR is required to be opened for at least 24 hours for
-  community feedback before it gets committed unless it has an explicit +1
-  from a committer
+- any non-document PR is required to be opened for at least 24 hours for
+community feedback before it gets committed unless it has an explicit +1
+from a committer
 
-  - any non-document PR needs to address all the comment and reach consensus
-  before it gets committed without a +1 from other committers
+- any non-document PR needs to address all the comment and reach consensus
+before it gets committed without a +1 from other committers
 
-  - a committer can commit documentation patches without explicit review
-  process. However, we encourage you to seek the feedback.
-
-
-List
-
-- This is the first bullet list item.  The blank line above the
-  first list item is required; blank lines between list items
-  (such as below this paragraph) are optional.
+- a committer can commit documentation patches without explicit review
+process. However, we encourage you to seek the feedback.
