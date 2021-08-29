@@ -44,3 +44,6 @@ repos:
    rev: v1.3.0
    hooks:
      - id: dead
+       args:
+         - '--exclude'
+         - 'docs/source/conf.py'
