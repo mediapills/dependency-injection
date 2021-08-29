@@ -1,14 +1,10 @@
-.. image:: https://api.codeclimate.com/v1/badges/31682a7859575a4f64b0/maintainability
-    :target: https://codeclimate.com/github/mediapills/dependency-injection/maintainability
-    :alt: Maintainability
+.. image:: https://img.shields.io/badge/License-MIT-yellow.svg
+     :target: https://github.com/mediapills/dependency-injection/blob/main/LICENSE.md
+     :alt: License: MIT
 
-.. image:: https://codecov.io/gh/mediapills/dependency-injection/branch/main/graph/badge.svg?token=USMBZ0W54N
-    :target: https://codecov.io/gh/mediapills/dependency-injection
-    :alt: Absolute coverage and coverage changes
-
-.. image:: https://github.com/mediapills/dependency-injection/workflows/CI%20Build/badge.svg?branch=main
-    :target: https://github.com/mediapills/dependency-injection/actions
-    :alt: GitHub Workflow Actions Status
+.. image:: https://readthedocs.org/projects/dependency-injection/badge/?version=main
+    :target: https://dependency-injection.readthedocs.io/en/main/?badge=main
+    :alt: Documentation Status
 
 .. image:: https://pypip.in/py_versions/mediapills.dependency_injection/badge.svg
     :target: https://pypi.python.org/pypi/mediapills.dependency_injection
@@ -22,6 +18,18 @@
     :target: https://pepy.tech/project/mediapills-dependency-injection
     :alt: Downloads
 
+.. image:: https://github.com/mediapills/dependency-injection/workflows/CI%20Build/badge.svg?branch=main
+    :target: https://github.com/mediapills/dependency-injection/actions
+    :alt: GitHub Workflow Actions Status
+
+.. image:: https://api.codeclimate.com/v1/badges/31682a7859575a4f64b0/maintainability
+    :target: https://codeclimate.com/github/mediapills/dependency-injection/maintainability
+    :alt: Maintainability
+
+.. image:: https://codecov.io/gh/mediapills/dependency-injection/branch/main/graph/badge.svg?token=USMBZ0W54N
+    :target: https://codecov.io/gh/mediapills/dependency-injection
+    :alt: Absolute coverage and coverage changes
+
 .. image:: https://requires.io/github/mediapills/dependency-injection/requirements.svg?branch=main
      :target: https://requires.io/github/mediapills/dependency-injection/requirements/?branch=main
      :alt: Requirements Status
@@ -29,10 +37,6 @@
 .. image:: https://bestpractices.coreinfrastructure.org/projects/5169/badge
      :target: https://bestpractices.coreinfrastructure.org/projects/5169
      :alt: CII Best Practices
-
-.. image:: https://img.shields.io/badge/License-MIT-yellow.svg
-     :target: https://github.com/mediapills/dependency-injection/blob/main/LICENSE.md
-     :alt: License: MIT
 
 
 Installation
