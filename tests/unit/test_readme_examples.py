@@ -1,3 +1,5 @@
+# Copyright The Mediapills Dependency Injection Authors.
+# SPDX-License-Identifier: MIT
 import unittest
 
 from mediapills.dependency_injection import Container

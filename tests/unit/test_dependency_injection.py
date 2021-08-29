@@ -1,3 +1,5 @@
+# Copyright The Mediapills Dependency Injection Authors.
+# SPDX-License-Identifier: MIT
 import time
 from random import random
 from typing import Any

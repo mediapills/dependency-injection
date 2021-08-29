@@ -1,3 +1,5 @@
+# Copyright The Mediapills Dependency Injection Authors.
+# SPDX-License-Identifier: MIT
 import inspect
 import warnings
 from functools import wraps
@@ -38,6 +40,8 @@ def handle_unknown_identifier(func: Callable[[Any, str], Any]) -> Any:
 
 
 class Injector(dict):  # type: ignore
+    """Container main class (deprecated)."""
+
     def deprecated(self, version: str, reason: str) -> None:
         """Issue a warning when the function is used."""
 
@@ -74,6 +78,7 @@ class Injector(dict):  # type: ignore
     @handle_unknown_identifier
     def process(self, key: Any) -> None:
         """Execute function or object as a function."""
+
         raw = dict.__getitem__(self, key)
 
         if key in self._raw or not hasattr(raw, "__call__") or inspect.isclass(raw):
@@ -206,5 +211,9 @@ class Injector(dict):  # type: ignore
 
 
 class Container(Injector):
+    """Container main class."""
+
     def deprecated(self, version: str, reason: str) -> None:
+        """Issue a warning when the function is used (disabled)."""
+
         pass
