@@ -26,7 +26,7 @@ ROUTINE_STACKLEVEL = 2
 WARN_CATEGORY = DeprecationWarning
 
 
-def handle_unknown_identifier(func: Callable[[Any, str], Any]) -> Any:
+def handle_unknown_identifier(func: Callable[..., Any]) -> Any:
     @wraps(func)
     def wrapped(*args: List[Any], **kwargs: Dict[Any, Any]) -> Any:
         self, key = args
@@ -34,7 +34,7 @@ def handle_unknown_identifier(func: Callable[[Any, str], Any]) -> Any:
         if key not in self:
             raise UnknownIdentifierException(key)
 
-        return func(*args, **kwargs)  # type: ignore
+        return func(*args, **kwargs)
 
     return wrapped
 
@@ -187,7 +187,7 @@ class Injector(dict):  # type: ignore
 
         self._protected.add(key)
 
-    def extend(self, key: Any, callable: Callable[[Any], Any]) -> None:  # dead: disable
+    def extend(self, key: Any, callable: Callable[..., Any]) -> None:  # dead: disable
         """Extends an object definition."""
         if key not in self:
             raise UnknownIdentifierException(key)
