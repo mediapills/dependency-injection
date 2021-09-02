@@ -39,23 +39,6 @@
      :alt: CII Best Practices
 
 
-Installation
-------------
-
-Before using mediapills.dependency_injection in your project, add it to your ``requirements.txt``
-file:
-
-.. code-block:: bash
-
-    $ echo "-e git+ssh://git@github.com/mediapills/dependency_injection.git@0.1.0#egg=mediapills.dependency_injection" >> requirements.txt
-
-or
-
-.. code-block:: bash
-
-    $ echo "mediapills.dependency_injection==0.1.0" >> requirements.txt
-
-
 Usage
 -----
 
