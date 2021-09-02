@@ -16,6 +16,7 @@ dependency (a service) into the client that uses it.
    :caption: Table of Content
 
    overview
+   installation
    usage
    definitions
    contributing
