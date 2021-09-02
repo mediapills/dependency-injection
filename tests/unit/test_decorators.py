@@ -3,6 +3,7 @@
 from unittest import TestCase
 
 from mediapills.dependency_injection.decorators import ProtectedDecorator
+from typing import List, Dict, Any
 
 
 class TestProtectedDecorator(TestCase):
@@ -10,6 +11,15 @@ class TestProtectedDecorator(TestCase):
         func = ProtectedDecorator(lambda: "test")
 
         result = func()
+
+        self.assertEqual("test", result)
+
+    def test_function_decoration_should_work(self) -> None:
+        @ProtectedDecorator
+        def dummy(*args: List[Any], **kwargs: Dict[Any, Any]):
+            return "test"
+
+        result = dummy()
 
         self.assertEqual("test", result)
 
