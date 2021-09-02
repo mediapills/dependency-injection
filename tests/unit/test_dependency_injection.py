@@ -231,6 +231,12 @@ class TestContainer(TestCase):
 
         self.assertNotEqual(obj["func"], obj["func"])
 
+    def test_call_protected_unavailable_should_raise_exception(self) -> None:
+        obj = Container()
+
+        with self.assertRaises(UnknownIdentifierException):
+            obj.protect("func")
+
     def test_call_non_protected_should_return_same(self) -> None:
 
         obj = Container()
