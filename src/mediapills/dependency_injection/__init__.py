@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT
 import inspect
 import warnings
+from enum import Enum
 from functools import wraps
 from typing import Any
 from typing import Callable
@@ -24,6 +25,26 @@ ROUTINE_STACKLEVEL = 2
 
 """Base class for warnings about deprecated features."""
 WARN_CATEGORY = DeprecationWarning
+
+"""Protects a callable from being interpreted as a service helper."""
+ITEM_DEFINITION_PROTECTED = "protected"
+
+"""Marks a callable as being a factory service."""
+ITEM_DEFINITION_FACTORY = "factory"
+
+"""Concatenate strings entries helper."""
+ITEM_DEFINITION_STRING = "string"
+
+"""Help override what we need from the autowiring, instead of configuring from
+scratch how the object will be built."""
+ITEM_DEFINITION_AUTOWIRED = "autowired"
+
+
+class ItemDefinition(Enum):
+    PROTECTED = ITEM_DEFINITION_PROTECTED  # dead: disable
+    FACTORY = ITEM_DEFINITION_FACTORY
+    STRING = ITEM_DEFINITION_STRING
+    AUTOWIRED = ITEM_DEFINITION_AUTOWIRED
 
 
 def handle_unknown_identifier(func: Callable[[Any, str], Any]) -> Any:
@@ -187,7 +208,7 @@ class Injector(dict):  # type: ignore
 
         self._protected.add(key)
 
-    def extend(self, key: Any, callable: Callable[[Any], Any]) -> None:  # dead: disable
+    def extend(self, key: Any, func: Callable[[Any], Any]) -> None:  # dead: disable
         """Extends an object definition."""
         if key not in self:
             raise UnknownIdentifierException(key)
@@ -203,11 +224,51 @@ class Injector(dict):  # type: ignore
         if not hasattr(raw, "__call__"):
             raise ExpectedInvokableException(key)
 
-        extended = lambda di, func=callable, base=raw: func(base(di), di)  # noqa: E731
+        extended = lambda di, f=func, r=raw: f(r(di), di)  # noqa: E731
 
         self._factories[key] = extended
 
         self.__setitem__(key, extended)
+
+    def set_custom(
+        self,
+        definition: ItemDefinition,
+        key: str,  # dead: disable
+        func: Callable[..., Any],  # dead: disable
+    ) -> None:
+
+        if definition.value == ITEM_DEFINITION_PROTECTED:
+            pass
+
+        elif definition.value == ITEM_DEFINITION_FACTORY:
+            pass
+
+        elif definition.value == ITEM_DEFINITION_STRING:
+            pass
+
+        elif definition.value == ITEM_DEFINITION_AUTOWIRED:
+            pass
+
+    def factory(self, key: Any) -> Callable[..., Any]:  # dead: disable
+        def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+            self.set_custom(ItemDefinition.FACTORY, key=key, func=func)
+            return func
+
+        return decorator
+
+    def string(self, key: Any) -> Callable[..., Any]:  # dead: disable
+        def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+            self.set_custom(ItemDefinition.STRING, key=key, func=func)
+            return func
+
+        return decorator
+
+    def autowired(self, key: Any) -> Callable[..., Any]:  # dead: disable
+        def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+            self.set_custom(ItemDefinition.AUTOWIRED, key=key, func=func)
+            return func
+
+        return decorator
 
 
 class Container(Injector):
