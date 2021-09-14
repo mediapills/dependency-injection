@@ -60,3 +60,11 @@ repos:
          - --license-filepath
          - LICENSE.md
          - --fuzzy-match-generates-todo
+ - repo: https://github.com/pycqa/pydocstyle
+   rev: 6.1.1
+   hooks:
+     - id: pydocstyle
+       name: Run pydocstyle
+       args:
+         - --convention=pep257
+         - --add-ignore=D100,D101,D102,D104,D107,D202,D205,D209,D400,D401,D402
