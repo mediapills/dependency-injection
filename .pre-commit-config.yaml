@@ -65,6 +65,9 @@ repos:
    hooks:
      - id: pydocstyle
        name: Run pydocstyle
+       exclude: |
+         (?x)
+         ^tests/.*\.py$
        args:
          - --convention=pep257
-         - --add-ignore=D100,D101,D102,D104,D107,D202,D205,D209,D400,D401,D402
+         - --add-ignore=D100,D104,D205,D400

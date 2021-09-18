@@ -26,7 +26,7 @@ class BaseInjectorException(Exception):
     pass
 
 
-class ExpectedInvokableException(BaseInjectorException):
+class ExpectedInvokableException(BaseInjectorException):  # dead: disable
     """A closure or invokable object was expected."""
 
     pass
@@ -38,7 +38,7 @@ class FrozenServiceException(BaseInjectorException):
     pass
 
 
-class ProtectedServiceException(BaseInjectorException):
+class ProtectedServiceException(BaseInjectorException):  # dead: disable
     """An attempt to extend a protected service was made."""
 
     pass

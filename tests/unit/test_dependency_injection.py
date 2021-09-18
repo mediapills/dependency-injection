@@ -18,22 +18,14 @@
 # LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-import time
-from random import random
 from typing import Any
 from unittest import TestCase
-from unittest.mock import Mock
-from unittest.mock import patch
 
 from parameterized import parameterized
 
 from mediapills.dependency_injection import Container
-from mediapills.dependency_injection import Injector
-from mediapills.dependency_injection.exceptions import ExpectedInvokableException
 from mediapills.dependency_injection.exceptions import FrozenServiceException
-from mediapills.dependency_injection.exceptions import ProtectedServiceException
 from mediapills.dependency_injection.exceptions import RecursionInfiniteLoopError
-from mediapills.dependency_injection.exceptions import UnknownIdentifierException
 
 DATA_TYPES_PARAMETRIZED_INPUT = [
     ("str", "value"),  # Check text type (str)
@@ -56,6 +48,8 @@ DATA_TYPES_PARAMETRIZED_INPUT = [
 
 
 class TestContainerBase(TestCase):
+    """Test Dict Base Container implementation."""
+
     def test_get_constructor_should_set(self) -> None:
         obj = Container(
             {"param1": "value 1", "param2": lambda di: di["param1"] + " changed"}
@@ -219,6 +213,8 @@ class TestContainerBase(TestCase):
 
 
 class TestContainer(TestCase):
+    """Test Custom Dict Container implementation."""
+
     def test_raw_warmed_should_be_same_as_initial(self) -> None:
 
         func = lambda i: "test"  # noqa: E731
@@ -239,76 +235,80 @@ class TestContainer(TestCase):
 
         self.assertEqual(func, obj.raw("func"))
 
-    def test_call_protected_should_return_different(self) -> None:
+    # def test_one(self):
+    #
+    #     obj = Container()
+    #
+    #     @obj.service("func")
+    #     def func(di: Container):
+    #         return "test"
+    #
+    #     y = obj["func"]
+    #     x = 12
 
-        obj = Container()
-        obj["func"] = lambda i: "time: '{}', rnad: '{}'".format(
-            time.time() * 1000, random()
-        )
-        obj.protect("func")
-
-        self.assertNotEqual(obj["func"], obj["func"])
-
-    def test_call_protected_unavailable_should_raise_exception(self) -> None:
-        obj = Container()
-
-        with self.assertRaises(UnknownIdentifierException):
-            obj.protect("func")
-
-    def test_call_non_protected_should_return_same(self) -> None:
-
-        obj = Container()
-        obj["func"] = lambda i: "time: '{}', rnad: '{}'".format(
-            time.time() * 1000, random()
-        )
-
-        self.assertEqual(obj["func"], obj["func"])
-
-    def test_extend_nonexistent_should_raise_error(self) -> None:
-
-        obj = Container()
-
-        with self.assertRaises(UnknownIdentifierException):
-            obj.extend("any", lambda i: "error")
-
-    def test_extend_frozen_should_raise_error(self) -> None:
-
-        obj = Container()
-        obj["any"] = lambda i: "test"
-        _ = obj["any"]
-
-        with self.assertRaises(FrozenServiceException):
-            obj.extend("any", lambda i: "error")
-
-    def test_extend_protected_should_raise_error(self) -> None:
-
-        obj = Container()
-        obj["any"] = lambda i: "test"
-        obj.protect("any")
-
-        with self.assertRaises(ProtectedServiceException):
-            obj.extend("any", lambda i: "error")
-
-    def test_extend_scalar_should_raise_error(self) -> None:
-
-        obj = Container()
-        obj["any"] = "test"
-
-        with self.assertRaises(ExpectedInvokableException):
-            obj.extend("any", lambda i: "error")
-
-    def test_extend_should_ok(self) -> None:
-
-        obj = Container()
-        obj["any"] = lambda i: "base"
-
-        obj.extend("any", lambda base, di: "extended " + base)
-
-        self.assertEqual("extended base", obj["any"])
-
-
-class TestInjector(TestCase):
-    @patch("mediapills.dependency_injection.warnings")
-    def test_init_should_warning(self, warnings: Mock) -> None:
-        _ = Injector()
-        warnings.warn.assert_called_once()
+    # def test_call_protected_should_return_different(self) -> None:
+    #
+    #     obj = Container()
+    #     obj["func"] = lambda i: "time: '{}', rnad: '{}'".format(
+    #         time.time() * 1000, random()
+    #     )
+    #     obj.protect("func")
+    #
+    #     self.assertNotEqual(obj["func"], obj["func"])
+    #
+    # def test_call_protected_unavailable_should_raise_exception(self) -> None:
+    #     obj = Container()
+    #
+    #     with self.assertRaises(UnknownIdentifierException):
+    #         obj.protect("func")
+    #
+    # def test_call_non_protected_should_return_same(self) -> None:
+    #
+    #     obj = Container()
+    #     obj["func"] = lambda i: "time: '{}', rnad: '{}'".format(
+    #         time.time() * 1000, random()
+    #     )
+    #
+    #     self.assertEqual(obj["func"], obj["func"])
+    #
+    # def test_extend_nonexistent_should_raise_error(self) -> None:
+    #
+    #     obj = Container()
+    #
+    #     with self.assertRaises(UnknownIdentifierException):
+    #         obj.extend("any", lambda i: "error")
+    #
+    # def test_extend_frozen_should_raise_error(self) -> None:
+    #
+    #     obj = Container()
+    #     obj["any"] = lambda i: "test"
+    #     _ = obj["any"]
+    #
+    #     with self.assertRaises(FrozenServiceException):
+    #         obj.extend("any", lambda i: "error")
+    #
+    # def test_extend_protected_should_raise_error(self) -> None:
+    #
+    #     obj = Container()
+    #     obj["any"] = lambda i: "test"
+    #     obj.protect("any")
+    #
+    #     with self.assertRaises(ProtectedServiceException):
+    #         obj.extend("any", lambda i: "error")
+    #
+    # def test_extend_scalar_should_raise_error(self) -> None:
+    #
+    #     obj = Container()
+    #     obj["any"] = "test"
+    #
+    #     with self.assertRaises(ExpectedInvokableException):
+    #         obj.extend("any", lambda i: "error")
+    #
+    # def test_extend_should_ok(self) -> None:
+    #
+    #     obj = Container()
+    #     obj["any"] = lambda i: "base"
+    #
+    #     obj.extend("any", lambda base, di: "extended " + base)
+    #
+    #     self.assertEqual("extended base", obj["any"])
