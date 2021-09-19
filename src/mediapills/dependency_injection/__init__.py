@@ -54,7 +54,6 @@ class Container(dict):  # type: ignore
         self._raw: t.Dict[str, t.Any] = dict()
         self._protected: t.Set[t.Any] = set()
         self._frozen: t.Set[t.Any] = set()
-        # self._factories: t.Dict[str, t.Any] = dict()
 
     def _freeze(self) -> None:
         """Warm up all offsets."""
@@ -63,35 +62,31 @@ class Container(dict):  # type: ignore
                 self.__getitem__(k)
 
     @handle_unknown_identifier
-    def process(self, key: t.Any) -> None:
-        """Execute function or object as a function."""
+    def __getitem__(self, key: t.Any) -> t.Any:
+        """Return the value at specified offset."""
+        # TODO: add __dependency_injection_result__ attr
+        if key in self._protected:
+            return dict.__getitem__(self, key)(self)
+
         raw = dict.__getitem__(self, key)
 
         if key in self._raw or not hasattr(raw, "__call__") or inspect.isclass(raw):
-            return
+            return raw
 
+        # handle RecursionInfiniteLoopError
         dict.__setitem__(
             self,
             key,
             lambda di, k=key: (_ for _ in ()).throw(RecursionInfiniteLoopError(k)),
         )
+
         result = raw(self)
         dict.__setitem__(self, key, result)
         self._raw[key] = raw
 
         self._frozen.add(key)
 
-    @handle_unknown_identifier
-    def __getitem__(self, key: t.Any) -> t.Any:
-        """Return the value at specified offset."""
-        # TODO: add factories check
-        # TODO: add __dependency_injection_result__ attr
-        if key in self._protected:
-            return dict.__getitem__(self, key)(self)
-
-        self.process(key)
-
-        return dict.__getitem__(self, key)
+        return result
 
     def __setitem__(self, key: t.Any, val: t.Any) -> None:
         """Assign a value to the specified offset."""
@@ -166,7 +161,6 @@ class Container(dict):  # type: ignore
         """Assign a callable value to the specified offset."""
 
         def decorator(func: Callable) -> t.Any:
-            # TODO: add __dependency_injection_service__ attr
             self.__setitem__(key, func)
 
             return func

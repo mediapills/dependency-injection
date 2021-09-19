@@ -235,16 +235,22 @@ class TestContainer(TestCase):
 
         self.assertEqual(func, obj.raw("func"))
 
-    # def test_one(self):
-    #
-    #     obj = Container()
-    #
-    #     @obj.service("func")
-    #     def func(di: Container):
-    #         return "test"
-    #
-    #     y = obj["func"]
-    #     x = 12
+    def test_service_decorator_should_set_callable(self) -> None:
+        obj = Container()
+
+        @obj.service("test")
+        def dummy(di: Container):  # type: ignore
+            return "Dummy output"
+
+        self.assertEqual("Dummy output", obj["test"])
+
+    @parameterized.expand(DATA_TYPES_PARAMETRIZED_INPUT)  # type: ignore
+    def test_service_decorator_should_set_value(self, key: str, val: Any) -> None:
+
+        obj = Container()
+        obj.service(key)(val)
+
+        self.assertEqual(val, obj[key])
 
     # def test_call_protected_should_return_different(self) -> None:
     #
