@@ -19,9 +19,12 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import inspect
+import types
 import typing as t
+from functools import update_wrapper
 from functools import wraps
 
+from mediapills.dependency_injection.exceptions import ExpectedCallableException
 from mediapills.dependency_injection.exceptions import FrozenServiceException
 from mediapills.dependency_injection.exceptions import RecursionInfiniteLoopError
 from mediapills.dependency_injection.exceptions import UnknownIdentifierException
@@ -29,6 +32,41 @@ from mediapills.dependency_injection.exceptions import UnknownIdentifierExceptio
 __all__ = ["Container"]
 
 Callable = t.Callable[..., t.Any]
+Dict = t.Dict[t.Any, t.Any]
+
+"""Callable value with lazy load implementation."""
+SERVICE_MODE_COMMON = 2 ** 0
+
+"""Callable value without lazy load implementation."""
+SERVICE_MODE_FACTORY = 2 ** 1
+
+"""Extended callable value."""
+SERVICE_MODE_EXTENDED = 2 ** 2
+
+"""Prevent callable from being modified."""
+SERVICE_MODE_FINAL = 2 ** 3
+
+"""Callable value with enabled autowiring."""
+SERVICE_MODE_KEYWORDED = 2 ** 4
+
+"""Available service types"""
+SERVICE_MODES = frozenset(
+    [
+        SERVICE_MODE_COMMON,
+        SERVICE_MODE_FACTORY,
+        SERVICE_MODE_EXTENDED,
+        SERVICE_MODE_FINAL,
+        SERVICE_MODE_KEYWORDED,
+    ]
+)
+
+
+# class ServiceMode(Enum):
+#     COMMON = SERVICE_MODE_COMMON
+#     FACTORY = SERVICE_MODE_FACTORY
+#     EXTENDED = SERVICE_MODE_EXTENDED
+#     FINAL = SERVICE_MODE_FINAL
+#     KEYWORDED = SERVICE_MODE_KEYWORDED
 
 
 def handle_unknown_identifier(func: Callable) -> t.Any:
@@ -54,6 +92,7 @@ class Container(dict):  # type: ignore
         self._raw: t.Dict[str, t.Any] = dict()
         self._protected: t.Set[t.Any] = set()
         self._frozen: t.Set[t.Any] = set()
+        self._templates: t.Set[t.Any] = set()
 
     def _freeze(self) -> None:
         """Warm up all offsets."""
@@ -73,7 +112,6 @@ class Container(dict):  # type: ignore
         if key in self._raw or not hasattr(raw, "__call__") or inspect.isclass(raw):
             return raw
 
-        # handle RecursionInfiniteLoopError
         dict.__setitem__(
             self,
             key,
@@ -92,6 +130,9 @@ class Container(dict):  # type: ignore
         """Assign a value to the specified offset."""
         if key in self._frozen:
             raise FrozenServiceException(key)
+
+        if callable(val) and not hasattr(val, "__dependency_injection_mode__"):
+            val.__dependency_injection_mode__ = SERVICE_MODE_COMMON
 
         dict.__setitem__(self, key, val)
 
@@ -150,50 +191,89 @@ class Container(dict):  # type: ignore
 
         return dict.__getitem__(self, key)
 
-    def template(self, key: str, template: str) -> None:  # dead: disable
+    def template(self, key: str, template: str) -> None:
         """Format the specified value(s) and insert them inside the string's
         placeholder.
         """
-        # TODO: save str key in self._templates set
-        raise NotImplementedError()
+        self.__setitem__(key, template)
 
-    def service(self, key: str) -> Callable:  # dead: disable
+        self._templates.add(key)
+
+    @staticmethod
+    def _cp_func(func: t.Any) -> t.Any:
+        """Make deepcopy of a function.
+        Based on http://stackoverflow.com/a/6528148/190597 (Glenn Maynard)
+        """
+        copy = types.FunctionType(
+            func.__code__,
+            func.__globals__,
+            name=func.__name__,
+            argdefs=func.__defaults__,
+            closure=func.__closure__,
+        )
+
+        copy.__kwdefaults__ = func.__kwdefaults__
+
+        return update_wrapper(copy, func)
+
+    def service(  # dead: disable
+        self, key: str, mode: int = SERVICE_MODE_COMMON
+    ) -> Callable:
         """Assign a callable value to the specified offset."""
 
         def decorator(func: Callable) -> t.Any:
-            self.__setitem__(key, func)
+            if not callable(func):
+                raise ExpectedCallableException()
+
+            if mode > sum(SERVICE_MODES):
+                raise ValueError(mode)
+
+            if mode & SERVICE_MODE_EXTENDED and key not in self:
+                raise UnknownIdentifierException(key)
+
+            val = self._cp_func(func=func)
+            val.__dependency_injection_mode__ = mode
+            if mode & SERVICE_MODE_EXTENDED:
+                val.__dependency_injection_callable_base__ = self.get(key, None)
+            if mode & SERVICE_MODE_KEYWORDED:
+                val.__dependency_injection_callable_args__ = val.__code__.co_varnames
+
+            self.__setitem__(key=key, val=val)  # type: ignore
 
             return func
 
         return decorator
 
-    def factory(self, key: str) -> Callable:  # dead: disable
-        """Mark a callable as being a factory service."""
-
-        def decorator(func: Callable) -> t.Any:
-            # TODO: add __dependency_injection_factory__ attr
-            raise NotImplementedError()
-
-        return decorator
-
-    def extend(self, key: str) -> Callable:  # dead: disable
-        """Extend an object definition."""
-
-        def decorator(func: Callable) -> t.Any:
-            # TODO: add __dependency_injection_extend__ attr
-            # TODO: save extension chain
-            raise NotImplementedError()
-
-        return decorator
-
-    def keyworded(self, key: str) -> Callable:  # dead: disable
-        """Mark a callable arguments as named auto full filled."""
-
-        def decorator(func: Callable) -> t.Any:
-            # TODO: add __dependency_injection_keyworded__ attr
-            raise NotImplementedError()
-
-        return decorator
+    # def factory(self, key: str) -> Callable:e
+    #     """Mark a callable as being a factory service."""
+    #
+    #     def decorator(func: Callable) -> t.Any:
+    #         func = self._wraps(key=key, func=func, mode=ServiceMode.FACTORY)
+    #
+    #         raise NotImplementedError()
+    #
+    #     return decorator
+    #
+    # def extend(self, key: str) -> Callable:
+    #     """Extend an object definition."""
+    #
+    #     def decorator(func: Callable) -> t.Any:
+    #         func = self._wraps(key=key, func=func, mode=ServiceMode.EXTENDED)
+    #
+    #         # TODO: save extension chain
+    #         raise NotImplementedError()
+    #
+    #     return decorator
+    #
+    # def keyworded(self, key: str) -> Callable:
+    #     """Mark a callable arguments as named auto full filled."""
+    #
+    #     def decorator(func: Callable) -> t.Any:
+    #         func = self._wraps(key=key, func=func, mode=ServiceMode.KEYWORDED)
+    #
+    #         raise NotImplementedError()
+    #
+    #     return decorator
 
     # def protect(self, key: t.Any) -> None:
     #     """Protects a callable from being interpreted as a service."""

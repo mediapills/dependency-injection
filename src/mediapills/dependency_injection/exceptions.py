@@ -26,7 +26,7 @@ class BaseInjectorException(Exception):
     pass
 
 
-class ExpectedInvokableException(BaseInjectorException):  # dead: disable
+class ExpectedCallableException(BaseInjectorException):
     """A closure or invokable object was expected."""
 
     pass

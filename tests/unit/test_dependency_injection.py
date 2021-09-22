@@ -24,6 +24,7 @@ from unittest import TestCase
 from parameterized import parameterized
 
 from mediapills.dependency_injection import Container
+from mediapills.dependency_injection.exceptions import ExpectedCallableException
 from mediapills.dependency_injection.exceptions import FrozenServiceException
 from mediapills.dependency_injection.exceptions import RecursionInfiniteLoopError
 
@@ -245,12 +246,15 @@ class TestContainer(TestCase):
         self.assertEqual("Dummy output", obj["test"])
 
     @parameterized.expand(DATA_TYPES_PARAMETRIZED_INPUT)  # type: ignore
-    def test_service_decorator_should_set_value(self, key: str, val: Any) -> None:
-
+    def test_service_decorator_should_not_accept_scalar(
+        self, key: str, val: Any
+    ) -> None:
         obj = Container()
-        obj.service(key)(val)
 
-        self.assertEqual(val, obj[key])
+        with self.assertRaises(ExpectedCallableException):
+            obj.service(key)(val)
+
+    # TODO: check all service premutations
 
     # def test_call_protected_should_return_different(self) -> None:
     #
