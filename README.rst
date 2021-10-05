@@ -6,7 +6,7 @@
     :target: https://dependency-injection.readthedocs.io/en/main/?badge=main
     :alt: Documentation Status
 
-.. image:: https://pypip.in/py_versions/mediapills.dependency_injection/badge.svg
+.. image:: https://pypip.in/py_versions/mediapills.dependency-injection/badge.svg
     :target: https://pypi.python.org/pypi/mediapills.dependency_injection
     :alt: Supported Python versions
 
